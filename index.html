@@ -1,1 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Constructing Knowledge Graphs from Heterogeneous Data Sources: Use Case in Ericsson</title>
+    
+    <meta name="description" content="Ericsogate: A multi-layered Knowledge Graph framework for managing interlinked CloudRAN data at Ericsson. Research by Abdelghny Orogat, Sri Lakshmi Vadlamani, Dimple Thomas, and Ahmed El-Roby.">
+    <meta name="keywords" content="Ericsogate, Knowledge Graphs, Telecom Industry, CloudRAN, Data Integration, Semantic Search, KG Summarization, CIKM 2024">
+    
+    <meta name="citation_title" content="Ericsogate: Advancing Analytics and Management of Data from Diverse Sources within Ericsson Using Knowledge Graphs">
+    <meta name="citation_author" content="Abdelghny Orogat">
+    <meta name="citation_author" content="Sri Lakshmi Vadlamani">
+    <meta name="citation_author" content="Dimple Thomas">
+    <meta name="citation_author" content="Ahmed El-Roby">
+    <meta name="citation_publication_date" content="2024/10/21">
+    <meta name="citation_conference_title" content="Proceedings of the 33th ACM International Conference on Information and Knowledge Management (CIKM '24)">
+    <meta name="citation_doi" content="10.1145/3627673.3680033">
 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --brand: #4f46e5; --accent-blue: #6366f1; --text: #1f2937; --muted: #6b7280; --bg: #f8fafc; --accent: #eef2ff; --code-bg: #1e293b; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; margin: 0; line-height: 1.6; color: var(--text); background: #fff; scroll-behavior: smooth; }
+        .container { max-width: 1050px; margin: 0 auto; padding: 0 1.5rem; }
+        header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; padding: 0.75rem 0; }
+        .nav-flex { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 800; font-size: 1.2rem; color: var(--brand); text-decoration: none; }
+        .nav-links a { margin-left: 1.25rem; text-decoration: none; color: var(--muted); font-size: 0.85rem; font-weight: 600; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--accent-blue); }
+        .hero { padding: 6rem 0 4rem; text-align: center; background: radial-gradient(circle at top, var(--accent), #fff); border-bottom: 1px solid #f1f5f9; }
+        .hero h1 { font-size: 3.5rem; font-weight: 800; letter-spacing: -0.05em; margin: 0; line-height: 1.1; color: var(--brand); }
+        .hero p { font-size: 1.25rem; color: var(--muted); max-width: 850px; margin: 1.5rem auto; }
+        .section { padding: 5rem 0; border-bottom: 1px solid #f1f5f9; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .card { padding: 2rem; border-radius: 1rem; border: 1px solid #e2e8f0; background: #fff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .figure-box { background: var(--bg); border-radius: 1.5rem; padding: 2.5rem; text-align: center; margin: 3rem 0; border: 1px solid #e2e8f0; }
+        .figure-img { max-width: 100%; height: auto; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); background: #fff; }
+        .caption { font-size: 0.85rem; color: var(--muted); font-style: italic; margin-top: 1.25rem; display: block; }
+        .tag { display: inline-block; padding: 0.2rem 0.6rem; background: var(--accent); color: var(--brand); border-radius: 0.5rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .data-table { width: 100%; border-collapse: collapse; margin: 2rem 0; font-size: 0.9rem; }
+        .data-table th { text-align: left; padding: 1rem; background: var(--bg); border-bottom: 2px solid #e2e8f0; }
+        .data-table td { padding: 1rem; border-bottom: 1px solid #f1f5f9; }
+        footer { padding: 4rem 0; text-align: center; font-size: 0.85rem; color: var(--muted); border-top: 1px solid #f1f5f9; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container nav-flex">
+        <a href="#" class="logo">Ericsogate Research</a>
+        <nav class="nav-links">
+            <a href="#overview">How It Works</a>
+            <a href="#architecture">Architecture</a>
+            <a href="#applications">Applications</a>
+            <a href="#results">Results</a>
+            <a href="#cite">Cite</a>
+        </nav>
+    </div>
+</header>
+
+<div class="hero">
+    <div class="container">
+        <span class="tag">CIKM 2024 Research</span>
+        <h1>Constructing Knowledge Graphs from Heterogeneous Data Sources</h1>
+        <span class="tag">Use Case in Ericsson</span>
+        <p><strong>Ericsogate</strong> is a modular, six-layer framework that transforms isolated data from relational databases, JSON files, and text logs into a unified <strong>Knowledge Graph</strong> for Cloud Radio Access Networks (CloudRAN).</p>
+        <p style="font-size: 1rem; margin-top: 0.5rem;">By Abdelghny Orogat, Sri Lakshmi Vadlamani, Dimple Thomas, and Ahmed El-Roby</p>
+        <div style="margin-top: 2rem;">
+            <a href="https://doi.org/10.1145/3627673.3680033" target="_blank" style="background: var(--brand); color: #fff; padding: 0.85rem 1.75rem; border-radius: 0.5rem; text-decoration: none; font-weight: 700; box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);">Read the Paper</a>
+        </div>
+    </div>
+</div>
+
+<section id="overview" class="section">
+    <div class="container">
+        <h2 style="text-align: center;">Understanding Ericsogate</h2>
+        <p style="text-align: center; color: var(--muted); max-width: 850px; margin: 0 auto 2rem;">A comprehensive guide to how Ericsogate transforms isolated data sources into an intelligent, interconnected Knowledge Graph</p>
+        
+        <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; margin-bottom: 3rem;">
+            <h3 style="color: #fff;">What Problem Does Ericsogate Solve?</h3>
+            <p>In Cloud Radio Access Networks (CloudRAN), data comes from everywhere—relational databases, JSON files, text logs, system metrics. Traditionally, this data exists in silos. A test case might be stored in one database, its execution results in another, and the software version details in yet another system. When engineers need to understand why a test failed, they must manually piece together information from multiple sources—a time-consuming and error-prone process.</p>
+            <p style="margin-bottom: 0;"><strong>Ericsogate solves this by creating a Knowledge Graph</strong>—a web of interconnected data where relationships are explicit. Click on a failed test, and instantly see the linked software version, the engineer who ran it, and the specific hardware configuration used. What took hours now takes seconds.</p>
+        </div>
+
+        <h2 style="text-align: center; margin-top: 4rem;">How Knowledge Graphs Work</h2>
+        <div class="card" style="background: var(--bg); margin-bottom: 3rem;">
+            <h3>From Isolated Data to Connected Intelligence</h3>
+            <p>Imagine three separate data sources:</p>
+            <ul style="line-height: 1.8;">
+                <li><strong>Relational Database:</strong> Contains cell tower data (cell_id: 123, bandwidth: 20MHz, location: Ottawa)</li>
+                <li><strong>JSON File:</strong> Has technical specifications (cell_id: 123, technology: 5G)</li>
+                <li><strong>Text Document:</strong> Contains location information ("Ottawa has a population of 1 million...")</li>
+            </ul>
+            <p>In traditional systems, these remain disconnected. But Ericsogate recognizes that <strong>cell_id 123</strong> and <strong>Ottawa</strong> appear in multiple sources. It creates a unified graph where:</p>
+            <ul style="line-height: 1.8;">
+                <li>Cell 123 → uses → 5G technology</li>
+                <li>Cell 123 → has bandwidth → 20MHz</li>
+                <li>Cell 123 → located in → Ottawa</li>
+                <li>Ottawa → has population → 1M</li>
+            </ul>
+            <p style="margin-bottom: 0;">Now you can traverse relationships: starting from a cell tower, follow connections to find its location, technology, and even demographic data about that location—all from a single query.</p>
+        </div>
+
+        <h2 style="text-align: center; margin-top: 4rem;">RDF Data Model and Ontology</h2>
+        <div class="card" style="background: #fff; margin-bottom: 3rem;">
+            <h3>The Building Blocks: Instance Data and Ontology</h3>
+            <p>Knowledge Graphs consist of two essential components:</p>
+            
+            <div style="margin: 1.5rem 0;">
+                <h4 style="color: var(--brand); margin-bottom: 0.5rem;">Instance Data</h4>
+                <p>The detailed, factual information about specific entities. For example, "TestCase_42 ran on Server_A and failed with error code 500." This represents individual facts from your data sources—test results, cell tower configurations, software versions.</p>
+            </div>
+
+            <div style="margin: 1.5rem 0;">
+                <h4 style="color: var(--brand); margin-bottom: 0.5rem;">Ontology</h4>
+                <p>The schema that defines classes and their relationships. It starts as a shared structure for data integration but evolves as developers enrich it. For example, the ontology defines that "Functional Test" and "Performance Test" are both subclasses of "Test Case," allowing you to query all tests regardless of their specific type.</p>
+            </div>
+
+            <p><strong>How they connect:</strong> Instance data links to the ontology through type predicates. Without the ontology, test cases (TC1, TC2) exist as isolated facts. With the ontology, they connect through their classes, enabling you to find all test runs across different data sources by following the class hierarchy.</p>
+
+            <p style="margin-top: 1.5rem;"><strong>RDF Triples:</strong> Data is represented as <code>&lt;subject, predicate, object&gt;</code> triples. For example: <code>&lt;TestCase_42, hasResult, "Failed"&gt;</code> or <code>&lt;Cell_123, locatedIn, Ottawa&gt;</code>. These triples form an interconnected network where subjects and objects are nodes, and predicates are edges defining relationships.</p>
+        </div>
+    </div>
+</section>
+
+<section id="architecture" class="section" style="background: var(--bg);">
+    <div class="container">
+        <h2 style="text-align: center;">The Six-Layer Architecture</h2>
+        <p style="text-align: center; color: var(--muted); max-width: 850px; margin: 0 auto 3rem;">Each layer has a specific responsibility, working together to transform raw data into actionable intelligence</p>
+        
+        <div class="figure-box" style="background: #fff;">
+            <span class="caption">Figure 1: Ericsogate's comprehensive modular architecture for CloudRAN data management.</span>
+        </div>
+
+        <div style="margin-top: 3rem;">
+            <div class="card" style="border-left: 4px solid #667eea;">
+                <span class="tag">Layer 1</span>
+                <h3>Ingestion Layer: Gathering Data from Everywhere</h3>
+                <p><strong>What it does:</strong> This layer connects to all your data sources—databases, APIs, log files, JSON documents—and pulls in raw data.</p>
+                <p><strong>How it works:</strong></p>
+                <ul style="line-height: 1.8; margin-left: 1.5rem;">
+                    <li><strong>Raw Data Readers</strong> fetch data from each source using APIs or direct connections</li>
+                    <li><strong>Parsers</strong> interpret the data structure—whether it's a database table, JSON object, or unstructured text</li>
+                    <li><strong>Data Cleaning</strong> fixes inconsistencies (removing duplicates, correcting misspellings)</li>
+                    <li><strong>Data Validation</strong> ensures data meets quality standards before moving forward</li>
+                    <li><strong>Origin Trace Readers</strong> record metadata: where did this data come from? when? who created it?</li>
+                </ul>
+                <p style="margin-bottom: 0;"><strong>Key benefit:</strong> Ensures data provenance and quality. You always know where your data came from and can trust its accuracy.</p>
+            </div>
+
+            <div class="card" style="border-left: 4px solid #764ba2; margin-top: 2rem;">
+                <span class="tag">Layer 2</span>
+                <h3>Transformation Layer: Standardizing the Chaos</h3>
+                <p><strong>What it does:</strong> Converts all different data formats into a single, standardized JSON format that represents graph relationships.</p>
+                <p><strong>How it works:</strong></p>
+                <ul style="line-height: 1.8; margin-left: 1.5rem;">
+                    <li>Each data source has a <strong>JSON Transformer</strong> that converts its specific format</li>
+                    <li>Data becomes <strong>triples</strong>: Subject-Predicate-Object (e.g., "Cell_123" "hasLocation" "Ottawa")</li>
+                    <li><strong>Local Ontologies</strong> define the class hierarchy for each source (e.g., "Functional Test" is a subclass of "Test Case")</li>
+                    <li>Developers work with familiar JSON—no need to learn RDF or complex graph formats</li>
+                </ul>
+                <p><strong>Example:</strong> A database row becomes: <code>{"subject": "TestCase_42", "predicate": "hasResult", "object": "Failed"}</code></p>
+                <p style="margin-bottom: 0;"><strong>Key benefit:</strong> Developers use standard JSON tools and libraries—dramatically reducing the learning curve.</p>
+            </div>
+
+            <div class="card" style="border-left: 4px solid #667eea; margin-top: 2rem;">
+                <span class="tag">Layer 3</span>
+                <h3>Control Layer: The Orchestra Conductor</h3>
+                <p><strong>What it does:</strong> Orchestrates the entire data pipeline—scheduling updates, aligning entities, and ensuring everything runs smoothly.</p>
+                <p><strong>How it works:</strong></p>
+                <ul style="line-height: 1.8; margin-left: 1.5rem;">
+                    <li><strong>Ingestion Registry</strong> keeps track of all data sources and their refresh rates</li>
+                    <li><strong>Scheduler</strong> automatically requests fresh data at configured intervals (from milliseconds to days)</li>
+                    <li><strong>Entity Alignment</strong> identifies when different sources refer to the same thing:
+                        <ul style="margin-top: 0.5rem;">
+                            <li><em>Local Matching:</em> "cell_123" and "Cell 123" are the same entity</li>
+                            <li><em>Global Matching:</em> "Ottawa" in the database matches "Ottawa" in the text document</li>
+                        </ul>
+                    </li>
+                    <li><strong>JSON-RDF Transformer</strong> converts the standardized JSON into RDF triples for storage</li>
+                    <li><strong>Global Ontology</strong> links class hierarchies across data sources, creating connections</li>
+                </ul>
+                <p style="margin-bottom: 0;"><strong>Key benefit:</strong> Automatic data updates and intelligent entity matching—no manual data integration needed.</p>
+            </div>
+
+            <div class="card" style="border-left: 4px solid #764ba2; margin-top: 2rem;">
+                <span class="tag">Layer 4</span>
+                <h3>Data Management Layer: Scalable Storage Engine</h3>
+                <p><strong>What it does:</strong> Stores the Knowledge Graph and handles queries, scaling horizontally across multiple servers as data grows.</p>
+                <p><strong>How it works:</strong></p>
+                <ul style="line-height: 1.8; margin-left: 1.5rem;">
+                    <li>Uses <strong>Apache Jena</strong> (open-source triple store) to store RDF data</li>
+                    <li><strong>DM Controller</strong> distributes data across multiple graph engines when a single server isn't enough</li>
+                    <li>Executes <strong>Federated SPARQL Queries</strong> across distributed engines</li>
+                    <li>Presents a <strong>single-graph facade</strong>—applications see one unified graph, not multiple databases</li>
+                </ul>
+                <p><strong>Scalability Example:</strong> When your graph reaches 100 million triples, the controller automatically distributes it across 5 servers. Queries run in parallel, and results merge seamlessly.</p>
+                <p style="margin-bottom: 0;"><strong>Key benefit:</strong> Unlimited storage capacity through horizontal scaling—add more machines as data grows.</p>
+            </div>
+
+            <div class="card" style="border-left: 4px solid #667eea; margin-top: 2rem;">
+                <span class="tag">Layer 5</span>
+                <h3>API Layer: The Security Gateway</h3>
+                <p><strong>What it does:</strong> Provides secure, easy-to-use REST APIs that return JSON data—hiding all graph database complexity.</p>
+                <p><strong>How it works:</strong></p>
+                <ul style="line-height: 1.8; margin-left: 1.5rem;">
+                    <li><strong>Endpoint Manager</strong> dynamically creates API endpoints for different applications</li>
+                    <li><strong>Request Handler</strong> translates simple API requests into complex SPARQL queries</li>
+                    <li>Returns results in standard JSON format</li>
+                    <li><strong>Access Control:</strong> Each endpoint has unique credentials—users only access authorized data</li>
+                    <li>Applications can combine data from multiple endpoints for comprehensive queries</li>
+                </ul>
+                <p><strong>Developer Experience:</strong> Instead of writing SPARQL, developers call: <code>GET /api/test-cases?status=failed</code></p>
+                <p style="margin-bottom: 0;"><strong>Key benefit:</strong> Application developers need zero knowledge of SPARQL or RDF—they work with familiar REST APIs.</p>
+            </div>
+
+            <div class="card" style="border-left: 4px solid #764ba2; margin-top: 2rem;">
+                <span class="tag">Layer 6</span>
+                <h3>Application Layer: Where Intelligence Becomes Action</h3>
+                <p><strong>What it does:</strong> Houses user-facing applications that leverage the Knowledge Graph for decision-making.</p>
+                <p><strong>Applications include:</strong></p>
+                <ul style="line-height: 1.8; margin-left: 1.5rem;">
+                    <li><strong>Semantic Search Dashboards</strong> for exploring interconnected data</li>
+                    <li><strong>KG Summarization Tools</strong> that condense 100,000 nodes into 100 meaningful insights</li>
+                    <li><strong>Recommendation Systems</strong> that suggest related tests or configurations</li>
+                    <li><strong>Error Detection Systems</strong> that identify patterns across failures</li>
+                    <li><strong>Visualization Tools</strong> for exploring the knowledge graph interactively</li>
+                </ul>
+                <p style="margin-bottom: 0;"><strong>Key benefit:</strong> Rapid application development—focus on business logic, not data integration.</p>
+            </div>
+        </div>
+
+        <div class="card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: #fff; margin-top: 3rem;">
+            <h3 style="color: #fff;">The Complete Data Journey</h3>
+            <p style="margin-bottom: 1rem;">Here's how data flows through all six layers:</p>
+            <ol style="line-height: 2; margin-left: 1.5rem;">
+                <li><strong>Collection:</strong> Layer 1 pulls test results from a database every hour</li>
+                <li><strong>Standardization:</strong> Layer 2 converts them to JSON triples with local ontology</li>
+                <li><strong>Orchestration:</strong> Layer 3 aligns "Test_42" with "TestCase_42" from another source, merges with global ontology</li>
+                <li><strong>Storage:</strong> Layer 4 stores the unified graph, distributing across servers as needed</li>
+                <li><strong>Access:</strong> Layer 5 exposes endpoint: <code>/api/tests/42</code> with proper authentication</li>
+                <li><strong>Insight:</strong> Layer 6 dashboard shows Test 42's failure, linked to software version 3.2.1, run by Engineer Jane on Server A</li>
+            </ol>
+            <p style="margin-bottom: 0;"><strong>Result:</strong> What used to require querying 5 different systems and manually correlating data now happens instantly with a single click.</p>
+        </div>
+    </div>
+</section>
+
+<section id="applications" class="section">
+    <div class="container">
+        <h2>Industrial Applications</h2>
+        <p style="text-align: center; color: var(--muted); max-width: 850px; margin: 0 auto 2rem;">Real-world applications that demonstrate the power of interconnected data</p>
+        
+        <div class="grid">
+            <div>
+                <span class="tag">Decision Support</span>
+                <h3>KG Summarization</h3>
+                <p>Instead of overwhelming stakeholders with 100,000+ nodes, our <strong>Pattern-Statistics-based Method</strong> provides a concise view (approx. 100 nodes) while maintaining 94% representativeness. This allows managers to see test case trends and outcomes at a glance.</p>
+                <p><strong>How it works:</strong> The system abstracts individual instances by their class types. For example, instead of showing TestCase_1, TestCase_2, TestCase_3 individually, it shows "TestCase" with statistics: "3 test cases, executed 4 times, 2 functional, 1 performance."</p>
+            </div>
+            <div>
+                <span class="tag">Interlinked Querying</span>
+                <h3>Semantic Search</h3>
+                <p>A dashboard that allows users to interrogate data based on <em>meaning</em> rather than keywords. Users can click on a failed test run and instantly see the specific software version and developer logs linked in the KG.</p>
+                <p><strong>Real-world impact:</strong> What previously required manually querying multiple systems and correlating results now happens with a single click, reducing investigation time from hours to seconds.</p>
+            </div>
+        </div>
+        
+        <div class="figure-box" style="background:#fff; margin-top: 3rem;">
+            <span class="caption">Figure 2: Abstracting individual instances into class-based summaries with statistical overlays.</span>
+        </div>
+
+        <h3 style="margin-top: 3rem;">Summarization in Action</h3>
+        <div class="card" style="background: var(--bg);">
+            <p><strong>The Challenge:</strong> A knowledge graph with 100,000+ nodes representing test cases, test runs, software versions, and configurations is too complex for stakeholders to understand.</p>
+            
+            <p style="margin-top: 1rem;"><strong>Traditional Approaches Fall Short:</strong></p>
+            <ul style="line-height: 1.8; margin-left: 1.5rem;">
+                <li><strong>Grouping-based methods</strong> merge nodes into supernodes, losing critical distinctions</li>
+                <li><strong>Bit compression</strong> reduces storage but doesn't facilitate analysis</li>
+                <li><strong>Simplification techniques</strong> remove nodes/edges but may miss important patterns</li>
+            </ul>
+
+            <p style="margin-top: 1rem;"><strong>Ericsogate's Solution:</strong> The Pattern-Statistics-based Method leverages the KG's ontology structure. Instead of showing individual test runs, it displays:</p>
+            <ul style="line-height: 1.8; margin-left: 1.5rem;">
+                <li>TestCase class (3 instances total)</li>
+                <li>→ Functional Test subclass (2 instances, ran 2 times)</li>
+                <li>→ Performance Test subclass (1 instance, ran 1 time)</li>
+                <li>Total test runs: 4</li>
+            </ul>
+
+            <p style="margin-bottom: 0; margin-top: 1rem;"><strong>Result:</strong> Stakeholders see meaningful patterns at a glance—which test types are most common, how often they run, and where failures concentrate—without drowning in raw data.</p>
+        </div>
+    </div>
+</section>
+
+<section id="results" class="section" style="background: var(--bg);">
+    <div class="container">
+        <h2>Experimental Impact</h2>
+        <p>We compared the Ericsogate KG system against Ericsson's traditional data processing methods.</p>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Traditional System</th>
+                    <th>Ericsogate (KG)</th>
+                    <th>Improvement</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Update Speed</strong></td>
+                    <td>20H hours</td>
+                    <td>H hours</td>
+                    <td>20x Faster</td>
+                </tr>
+                <tr>
+                    <td><strong>Scalability</strong></td>
+                    <td>F features/month</td>
+                    <td>10F features/month</td>
+                    <td>10x Throughput</td>
+                </tr>
+                <tr>
+                    <td><strong>Navigation Depth</strong></td>
+                    <td>2 hops</td>
+                    <td>Unlimited</td>
+                    <td>Infinite Traversal</td>
+                </tr>
+                <tr>
+                    <td><strong>Summarization Compression</strong></td>
+                    <td>~80%</td>
+                    <td>99.90%</td>
+                    <td>Significantly Higher</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 style="margin-top: 3rem;">Detailed Performance Analysis</h3>
+        
+        <div class="grid">
+            <div class="card">
+                <h4>Summarization Performance</h4>
+                <p><strong>Compression Rate:</strong> Ericsogate achieves 99.90% compression, reducing 100,000 nodes to approximately 100 summary nodes while maintaining 94% representativeness.</p>
+                <p><strong>Scalability:</strong> The system scales horizontally—adding more classes increases summary size linearly—but remains unaffected by vertical scaling (more entities per class).</p>
+            </div>
+            
+            <div class="card">
+                <h4>Semantic Search Performance</h4>
+                <p><strong>Update Speed:</strong> Modifying search features that previously took 20H hours now takes H hours—a 20x improvement.</p>
+                <p><strong>Feature Development:</strong> The team can now add 10 times more features per month, accelerating innovation and user value delivery.</p>
+            </div>
+        </div>
+
+        <div class="card" style="background: var(--brand); color: #fff; margin-top: 2rem;">
+            <h3>Lessons Learned: KG Mastery is Optional</h3>
+            <p>Our framework abstracts SPARQL and RDF complexities. Ingestion developers work with standard JSON, while application developers use clean API endpoints, reducing the learning curve and accelerating team integration.</p>
+            <p style="margin-bottom: 0;"><strong>Key Insight:</strong> Only developers working on the Control and API layers need SPARQL knowledge. All other team members—data ingestion developers, application developers—work with familiar technologies (JSON, REST APIs), dramatically reducing training time and enabling faster onboarding.</p>
+        </div>
+
+        <h3 style="margin-top: 3rem;">Deployment Architecture</h3>
+        <div class="card" style="background: var(--bg);">
+            <p><strong>Cloud-Native Infrastructure:</strong> Ericsogate leverages Kubernetes and Helm for containerized deployment, ensuring:</p>
+            <ul style="line-height: 1.8; margin-left: 1.5rem;">
+                <li><strong>High Availability:</strong> Pods can be replicated across multiple servers</li>
+                <li><strong>Fault Tolerance:</strong> Automatic recovery from failures</li>
+                <li><strong>Elastic Scaling:</strong> Resources scale automatically based on demand</li>
+                <li><strong>Independent Deployment:</strong> Each layer can be updated without affecting others</li>
+            </ul>
+            <p style="margin-top: 1rem;"><strong>Pod Configuration:</strong></p>
+            <ul style="line-height: 1.8; margin-left: 1.5rem;">
+                <li><strong>Application Pods:</strong> House API endpoints and data readers</li>
+                <li><strong>Control Layer Pod:</strong> Manages scheduling and data ingestion</li>
+                <li><strong>Data Management Pods:</strong> Distributed triple stores for horizontal scaling</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="cite" class="section">
+  <div class="container">
+    <h2>How to Cite</h2>
+
+    <p style="margin-bottom: 2.5rem; max-width: 900px;">
+      If you use <strong>Ericsogate</strong> or its methodology in your research, please cite the publication below. Proper citation supports reproducibility and sustained maintenance of knowledge graph frameworks.
+    </p>
+
+    <div style="
+        background: #0b1220;
+        border: 1px solid rgba(255,255,255,0.10);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+      ">
+        <div style="
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          padding: 0.9rem 1.1rem;
+          background: linear-gradient(135deg, rgba(79,70,229,0.35), rgba(124,58,237,0.25));
+          border-bottom: 1px solid rgba(255,255,255,0.08);
+        ">
+          <div style="display:flex; flex-direction:column; gap:0.15rem;">
+            <span style="font-weight: 800; color: #eef2ff; letter-spacing: -0.01em;">Ericsogate (CIKM 2024)</span>
+            <span style="font-size: 0.85rem; color: rgba(255,255,255,0.75);">BibTeX citation</span>
+          </div>
+          <span style="
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #ffffff;
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.16);
+            border: 1px solid rgba(255,255,255,0.16);
+            white-space: nowrap;
+          ">COPY</span>
+        </div>
+
+        <pre style="
+          margin: 0;
+          padding: 1.15rem 1.1rem 1.25rem;
+          color: #e5e7eb;
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+          font-size: 0.86rem;
+          line-height: 1.55;
+          white-space: pre;
+          overflow-x: auto;
+        ">@inproceedings{orogat2024ericsogate,
+  author = {Orogat, Abdelghny and Vadlamani, Sri Lakshmi and Thomas, Dimple and El-Roby, Ahmed},
+  title = {Ericsogate: Advancing Analytics and Management of Data from Diverse Sources within Ericsson Using Knowledge Graphs},
+  year = {2024},
+  booktitle = {Proceedings of the 33rd ACM International Conference on Information and Knowledge Management (CIKM '24)},
+  doi = {10.1145/3627673.3680033},
+  location = {Boise, ID, USA},
+  publisher = {ACM}
+}</pre>
+
+        <div style="
+          padding: 0.85rem 1.1rem;
+          border-top: 1px solid rgba(255,255,255,0.08);
+          color: rgba(255,255,255,0.78);
+          font-size: 0.9rem;
+          background: rgba(255,255,255,0.02);
+        ">
+          <span style="font-weight: 700; color: #c7d2fe;">Use when:</span>
+          Referencing the Ericsogate framework, six-layer architecture, or applications in telecom/CloudRAN environments.
+        </div>
+      </div>
+
+      <div style="
+        margin-top: 2rem;
+        padding: 0.9rem 1rem;
+        border-radius: 12px;
+        border: 1px dashed rgba(79,70,229,0.35);
+        background: rgba(79,70,229,0.06);
+        color: #374151;
+        max-width: 900px;
+      ">
+        <strong>Note:</strong> For questions about implementation or collaboration opportunities, contact the authors via the institutions listed below.
+      </div>
+  </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p><strong>Abdelghny Orogat, Sri Lakshmi Vadlamani, Dimple Thomas, & Ahmed El-Roby</strong></p>
+        <p>Carleton University & Telefonaktiebolaget LM Ericsson</p>
+        <p>© 2024 Association for Computing Machinery. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>
